@@ -1,20 +1,25 @@
 import logging
 import requests
 from typing import Dict, Any
+from src.config import settings
 
 logger = logging.getLogger(__name__)
-
-# ВСТАВЬ КЛЮЧ ОТ OPENROUTER СЮДА:
-API_KEY = "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"
 
 class RiskAnalyzer:
     """
     Отказоустойчивый класс для работы с LLM через балансировщик OpenRouter.
     Обеспечивает доступ без VPN и позволяет менять нейросети "на лету".
     """
+    from src.config import settings
+
+class RiskAnalyzer:
+    """
+    Отказоустойчивый класс для работы с LLM через балансировщик OpenRouter.
+    """
     def __init__(self):
-        self.api_key = API_KEY.strip()
-        logger.info("Архитектура OpenRouter инициализирована. VPN не требуется.")
+        # Безопасно достаем ключ из переменных окружения и чистим от мусора Windows
+        self.api_key = settings.OPENROUTER_API_KEY.strip().replace('"', '').replace("'", "")
+        logger.info("Архитектура OpenRouter инициализирована. Ключ в безопасности.")
 
     def analyze(self, company_data: Dict[str, Any]) -> str:
         logger.info("Отправка данных на скоринг...")
