@@ -67,3 +67,26 @@ def decrement_checks(telegram_id: int):
             conn.commit()
     except Exception as e:
         logger.error(f"Ошибка при списании лимита: {e}")
+
+
+def add_checks_to_user(telegram_id: int, amount: int):
+    """Ручное начисление проверок клиенту."""
+    try:
+        with sqlite3.connect(DB_PATH) as conn:
+            cursor = conn.cursor()
+            cursor.execute(
+                "SELECT checks_left FROM users WHERE telegram_id = ?", (telegram_id,)
+            )
+            if cursor.fetchone() is None:
+                cursor.execute(
+                    "INSERT INTO users (telegram_id, checks_left) VALUES (?, ?)",
+                    (telegram_id, amount),
+                )
+            else:
+                cursor.execute(
+                    "UPDATE users SET checks_left = checks_left + ? WHERE telegram_id = ?",
+                    (amount, telegram_id),
+                )
+            conn.commit()
+    except Exception as e:
+        logger.error(f"Ошибка при начислении лимита: {e}")
