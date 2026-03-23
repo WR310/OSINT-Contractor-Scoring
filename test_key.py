@@ -1,7 +1,7 @@
 import requests
 
 # ВСТАВЬ СВОЙ КЛЮЧ СЮДА (внутри кавычек):
-API_KEY = "AIzaSyCZia43SPqGiijdN6EA5IDhGaTFt6ZrRi8"
+API_KEY = "your_api_key_here"
 
 def test_google_api():
     print(f"Тестируем ключ: {API_KEY[:5]}... (длина: {len(API_KEY)})")
