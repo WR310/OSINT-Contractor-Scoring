@@ -14,7 +14,9 @@ class RiskAnalyzer:
 
     def __init__(self):
         # Безопасно достаем ключ из переменных окружения и чистим от мусора Windows
-        self.api_key = settings.OPENROUTER_API_KEY.strip().replace('"', "").replace("'", "")
+        self.api_key = (
+            settings.OPENROUTER_API_KEY.strip().replace('"', "").replace("'", "")
+        )
         logger.info("Архитектура OpenRouter инициализирована. Ключ в безопасности.")
 
     def analyze(self, company_data: Dict[str, Any]) -> str:
@@ -60,7 +62,6 @@ class RiskAnalyzer:
         [Твой краткий вывод: можно ли работать с этим контрагентом]
         """
 
-        # Меняя строчку 'model', мы можем переключаться между ChatGPT, Claude и Gemini за секунду
         payload = {
             "model": "openrouter/free",
             "messages": [{"role": "user", "content": prompt}],
@@ -73,4 +74,11 @@ class RiskAnalyzer:
                 logger.info("Отчет успешно получен.")
                 return response.json()["choices"][0]["message"]["content"]
             else:
-                logger.error(f"Ошибка API агрегатора: {response.status_code}
+                logger.error(
+                    f"Ошибка API агрегатора: {response.status_code} - {response.text}"
+                )
+                return f"❌ Ошибка API: {response.status_code}"
+
+        except Exception as e:
+            logger.error(f"Сетевая ошибка: {e}")
+            return f"❌ Произошла сетевая ошибка: {str(e)}"
